@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Développeur Fullstack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- RESET & STRUCTURE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', 'Segoe UI', sans-serif; }
+        body { background-color: #050505; color: #ffffff; overflow-x: hidden; cursor: crosshair; }
+
+        /* --- NAV DOTS --- */
+        .nav-dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 12px; }
+        .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 1px solid #00f2fe; cursor: pointer; transition: all 0.3s; }
+        .nav-dot.active, .nav-dot:hover { background: #00f2fe; box-shadow: 0 0 10px #00f2fe; transform: scale(1.4); }
+
+        /* --- SCROLL INDICATOR --- */
+        .scroll-indicator { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: 1; transition: opacity 0.5s; pointer-events: none; }
+        .scroll-indicator span { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: #00f2fe; letter-spacing: 3px; text-transform: uppercase; }
+        .scroll-arrow { width: 1px; height: 40px; background: linear-gradient(to bottom, #00f2fe, transparent); animation: scrollArrow 1.5s ease-in-out infinite; }
+        @keyframes scrollArrow { 0%,100% { opacity: 0.3; transform: scaleY(0.5); } 50% { opacity: 1; transform: scaleY(1); } }
+        .scroll-indicator.hidden { opacity: 0; }
+
+        /* --- TYPING CURSOR --- */
+        .typing-cursor { display: inline-block; width: 4px; height: 1em; background: #00f2fe; margin-left: 4px; animation: blink 0.8s steps(1) infinite; vertical-align: text-bottom; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* --- HERO NAME --- */
+        .hero-name { font-family: 'Share Tech Mono', monospace; font-size: 0.95rem; color: #00f2fe; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 10px; opacity: 0.8; }
+        .hero-tagline { font-size: 1rem; color: #e6eaee; letter-spacing: 2px; font-family: 'Share Tech Mono', monospace; margin-bottom: 30px; }
+
+        /* --- GLITCH EFFECT --- */
+        @keyframes glitch {
+            0%,100% { text-shadow: 0 0 15px #00f2fe; clip-path: none; }
+            2% { clip-path: polygon(0 10%, 100% 10%, 100% 20%, 0 20%); transform: translateX(-4px); text-shadow: 4px 0 #ff007f; }
+            4% { clip-path: none; transform: translateX(0); }
+            6% { clip-path: polygon(0 55%, 100% 55%, 100% 65%, 0 65%); transform: translateX(4px); text-shadow: -4px 0 #00f2fe; }
+            8% { clip-path: none; transform: translateX(0); text-shadow: 0 0 15px #00f2fe; }
+        }
+        .glitch-text { animation: glitch 4s infinite; display: inline-block; }
+
+        /* --- SKILL BARS --- */
+        .skill-bar-wrap { margin-bottom: 14px; }
+        .skill-bar-label { display: flex; justify-content: space-between; font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; color: #a3a3a3; margin-bottom: 5px; }
+        .skill-bar-label span:last-child { color: #00f2fe; }
+        .skill-bar-bg { height: 4px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
+        .skill-bar-fill { height: 100%; background: linear-gradient(to right, #00f2fe, #4facfe); border-radius: 2px; width: 0; transition: width 1.2s cubic-bezier(0.25,1,0.5,1); box-shadow: 0 0 8px #00f2fe; }
+        .skill-bar-fill.pink { background: linear-gradient(to right, #ff007f, #c400a0); box-shadow: 0 0 8px #ff007f; }
+
+        /* --- EDUCATION SECTION --- */
+        .edu-card { width: 100%; max-width: 700px; background: rgba(10,10,10,0.7); border: 1px solid rgba(0,242,254,0.3); padding: 40px; position: relative; }
+        .edu-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(to right, transparent, #00f2fe, #ff007f, transparent); }
+        .edu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .edu-header h2 { color: #00f2fe; font-size: 1.8rem; text-transform: uppercase; letter-spacing: 3px; }
+        .edu-timeline { position: relative; padding-left: 24px; }
+        .edu-timeline::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 1px; background: linear-gradient(to bottom, #00f2fe, #ff007f); }
+        .edu-item { position: relative; margin-bottom: 28px; }
+        .edu-item::before { content: ''; position: absolute; left: -28px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: #00f2fe; box-shadow: 0 0 8px #00f2fe; }
+        .edu-item:last-child { margin-bottom: 0; }
+        .edu-degree { font-size: 1.15rem; font-weight: 700; color: #fff; letter-spacing: 1px; }
+        .edu-school { color: #00f2fe; font-family: 'Share Tech Mono', monospace; font-size: 0.85rem; margin: 4px 0; }
+        .edu-year { color: #ff007f; font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; }
+        .edu-desc { color: #777; font-size: 0.95rem; margin-top: 6px; line-height: 1.5; }
+
+        /* --- SOFT SKILLS PANEL --- */
+        .soft-panel { flex: 1; background: rgba(10,10,10,0.7); border: 1px solid rgba(0,242,254,0.25); padding: 30px; position: relative; overflow: hidden; }
+        .soft-panel h3 { color: #00f2fe; font-family: 'Share Tech Mono', monospace; border-bottom: 1px dashed rgba(0,242,254,0.3); padding-bottom: 10px; margin-bottom: 20px; font-size: 0.85rem; }
+        .soft-tag { display: inline-block; padding: 5px 12px; border: 1px solid rgba(0,242,254,0.3); color: #a3a3a3; font-size: 0.8rem; margin: 4px; letter-spacing: 1px; transition: all 0.3s; font-family: 'Share Tech Mono', monospace; }
+        .soft-tag:hover { border-color: #00f2fe; color: #00f2fe; box-shadow: 0 0 10px rgba(0,242,254,0.3); }
+        .soft-tag.pink { border-color: rgba(255,0,127,0.3); }
+        .soft-tag.pink:hover { border-color: #ff007f; color: #ff007f; box-shadow: 0 0 10px rgba(255,0,127,0.3); }
+        .lang-flag { font-size: 1.3rem; }
+        .lang-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .lang-name { font-family: 'Share Tech Mono', monospace; font-size: 0.82rem; color: #a3a3a3; min-width: 80px; }
+        .lang-level { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: #00f2fe; }
+
+        /* --- PROJECT TECH TAGS --- */
+        .p-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .p-tag { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; padding: 3px 10px; border: 1px solid rgba(0,242,254,0.3); color: #00f2fe; letter-spacing: 1px; }
+        .p-tag.pink { border-color: rgba(255,0,127,0.3); color: #ff007f; }
+
+        /* --- CONTACT EXTRA LINKS --- */
+        .contact-links { display: flex; gap: 15px; margin-top: 20px; justify-content: center; flex-wrap: wrap; }
+        .contact-link { font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; color: #666; text-decoration: none; display: flex; align-items: center; gap: 6px; letter-spacing: 2px; transition: color 0.3s; }
+        .contact-link:hover { color: #00f2fe; }
+        .contact-link svg { width: 16px; height: 16px; fill: currentColor; }
+        #bg { position: fixed; top: 0; left: 0; z-index: -1; width: 100vw; height: 100vh; }
+
+        /* --- FLASH DE FRANCHISSEMENT DE L'HORIZON --- */
+        #horizonFlash {
+            position: fixed; inset: 0; z-index: 50;
+            background: radial-gradient(circle at 50% 50%, #00f2fe 0%, #00f2fe 35%, transparent 75%);
+            opacity: 0; pointer-events: none; mix-blend-mode: screen;
+        }
+
+        /* --- SECTIONS --- */
+        .hero-section { min-height: 100vh; display: flex; align-items: center; padding: 0 5%; position: relative; z-index: 1; }
+        .hero-content { pointer-events: none; max-width: 800px; }
+        h1 { font-size: 4.5rem; line-height: 1.1; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        h1 span { background: linear-gradient(to right, #00f2fe, #4facfe); -webkit-background-clip: text; color: transparent; }
+        p { font-size: 1.2rem; color: #a3a3a3; max-width: 500px; margin-bottom: 30px; pointer-events: auto; }
+
+        .portfolio-container { width: 100%; padding-top: 50vh; }
+        .portfolio-step { min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 0 5%; position: relative; z-index: 1; perspective: 1000px; }
+
+        /* --- ANIMATIONS & CARTES PROJETS --- */
+        @keyframes float3D {
+            0% { transform: translateY(0px) rotateX(5deg) rotateY(0deg); }
+            50% { transform: translateY(-20px) rotateX(-5deg) rotateY(10deg); }
+            100% { transform: translateY(0px) rotateX(5deg) rotateY(0deg); }
+        }
+
+        .glass-card {
+            width: 100%; max-width: 600px; background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(10px); border: 1px solid #00f2fe; padding: 40px;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.1); transform-style: preserve-3d;
+            animation: float3D 6s infinite ease-in-out; pointer-events: auto; margin: 0 auto;
+        }
+        .glass-card h2 { color: #00f2fe; font-size: 2rem; margin-bottom: 15px; text-transform: uppercase; }
+
+        .skills-3d-container { width: 100%; max-width: 800px; display: flex; gap: 30px; transform-style: preserve-3d; animation: float3D 8s infinite ease-in-out reverse; pointer-events: auto; }
+        .cyber-panel { flex: 1; background: rgba(10, 10, 10, 0.7); border: 1px solid #ff007f; padding: 30px; position: relative; overflow: hidden; }
+        .cyber-panel h3 { color: #ff007f; font-family: monospace; border-bottom: 1px dashed #ff007f; padding-bottom: 10px; margin-bottom: 20px; }
+        .cyber-list { list-style: none; color: #00f2fe; font-weight: bold; line-height: 2; }
+        .cyber-list li::before { content: '>> '; color: #fff; }
+
+        .project-terminal {
+            width: 100%; max-width: 700px; background: rgba(5, 5, 5, 0.8);
+            border-left: 4px solid #00f2fe; border-right: 4px solid #ff007f;
+            padding: 40px; position: relative; pointer-events: auto; transition: 0.3s; backdrop-filter: blur(5px);
+        }
+        .project-terminal:hover { box-shadow: 0 0 40px rgba(0, 242, 254, 0.3); transform: scale(1.02); }
+        .p-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .p-title { font-size: 2rem; color: #fff; text-transform: uppercase; }
+        .p-year { color: #ff007f; font-family: monospace; font-size: 1.2rem; }
+        .p-context { color: #a3a3a3; margin-bottom: 20px; font-size: 1.1rem; }
+        .p-testimonial { background: rgba(0, 242, 254, 0.05); border-left: 3px solid #00f2fe; padding: 15px; font-style: italic; color: #fff; margin-bottom: 25px; }
+        .p-testimonial span { color: #00f2fe; font-weight: bold; font-style: normal; display: block; margin-top: 5px; font-size: 0.9rem; }
+
+        .project-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
+            color: #a3a3a3; border: 1px solid rgba(255,255,255,0.15);
+            padding: 3px 10px; margin-bottom: 14px; letter-spacing: 1px;
+        }
+
+        /* --- LA CARTE ÉCRAN FINALE (Ton idée géniale) --- */
+        @keyframes pulseScreen {
+            0% { box-shadow: 0 0 30px rgba(0, 242, 254, 0.2), inset 0 0 20px rgba(0, 242, 254, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(0, 242, 254, 0.4), inset 0 0 40px rgba(0, 242, 254, 0.2); }
+            100% { box-shadow: 0 0 30px rgba(0, 242, 254, 0.2), inset 0 0 20px rgba(0, 242, 254, 0.1); }
+        }
+
+        .cyber-screen-card {
+            width: 100%; 
+            max-width: 800px;
+            min-height: 450px; /* Donne une vraie proportion d'écran 16:9 */
+            background: rgba(0, 10, 20, 0.85); 
+            border: 2px solid #00f2fe; 
+            border-radius: 8px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            pointer-events: auto;
+            animation: pulseScreen 4s infinite alternate;
+            backdrop-filter: blur(15px);
+            
+            /* --- LE FIX D'ALIGNEMENT PARFAIT --- */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centre verticalement */
+            align-items: center;     /* Centre horizontalement */
+            text-align: center;
+        }
+
+        /* On s'assure que le contenu prend bien toute la largeur disponible */
+        .screen-content {
+            position: relative;
+            z-index: 1; 
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Effet de lignes de scan TV/Hologramme */
+        .cyber-screen-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(0, 242, 254, 0.1) 1px, transparent 1px);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+
+        .screen-content h3 { 
+            color: #fff; font-family: monospace; letter-spacing: 5px; font-size: 2.5rem; 
+            margin-bottom: 20px; text-shadow: 0 0 15px #00f2fe; text-transform: uppercase;
+        }
+        
+        .screen-content p { 
+            font-size: 1.2rem; color: #a3a3a3; margin-bottom: 40px; font-family: monospace; line-height: 1.6;
+            
+        }
+
+        .cybr-btn {
+            display: inline-block; padding: 15px 35px; font-size: 1rem; font-weight: bold;
+            color: #050505; background: #00f2fe; border: 1px solid #00f2fe;
+            text-transform: uppercase; letter-spacing: 3px; text-decoration: none; 
+            transition: 0.3s; margin: 10px;
+        }
+        .cybr-btn.pink { color: #fff; background: transparent; border-color: #ff007f; }
+        .cybr-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px #fff; transform: translateY(-3px); }
+        .cybr-btn.pink:hover { background: #ff007f; color: #fff; box-shadow: 0 0 30px #ff007f; transform: translateY(-3px); }
+
+        .btn {
+            pointer-events: auto; display: inline-block; padding: 15px 35px; border: 1px solid #00f2fe;
+            color: #00f2fe; text-decoration: none; font-weight: bold; text-transform: uppercase;
+            letter-spacing: 1px; transition: all 0.3s ease; background: rgba(0, 242, 254, 0.05); backdrop-filter: blur(5px);
+        }
+        .btn:hover { background: #00f2fe; color: #050505; box-shadow: 0 0 20px rgba(0, 242, 254, 0.5); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .hero-content { left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%; position: absolute; top: 50%; }
+            .skills-3d-container { flex-direction: column; }
+            .cyber-screen-card { padding: 40px 20px; }
+        }
+    </style>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/",
+                "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm",
+                "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.js/+esm"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <canvas id="bg"></canvas>
+    <div id="horizonFlash"></div>
+
+    <!-- Navigation dots -->
+    <nav class="nav-dots" id="navDots"></nav>
+
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator" id="scrollIndicator">
+        <span>Scroll</span>
+        <div class="scroll-arrow"></div>
+    </div>
+
+    <header class="hero-section" data-section="Hero">
+        <main class="hero-content">
+            <div class="hero-name">EPAPE MANDENGUE Sammy Henrick Nathanaël</div>
+            <h1>Développeur<br><span>Web </span>.</h1>
+            <div class="hero-tagline">// IA &nbsp;·&nbsp; Web 3D &nbsp;·&nbsp; Desktop &nbsp;·&nbsp; Mobile</div>
+            <p id="heroTyping"></p>
+            <a href="./Epape Mandengue Sammy Henrick Nathanaël.pdf" class="btn" style="margin-right:12px; pointer-events:auto;">[ Télécharger CV ]</a>
+        </main>
+    </header>
+
+    <main class="portfolio-container" id="about">
+        
+        <section class="portfolio-step" data-section="Expertise">
+            <div class="glass-card">
+                <h2>Expertise & Vision</h2>
+                <p>Passionné par l'IA et le développement web, je me spécialise dans la création d'outils décisionnels complexes et d'expériences web immersives.</p>
+                <br>
+                <p><strong style="color:#00f2fe">Projet phare :</strong> Analyse automatique de documents financiers via RAG (Master AI).</p>
+            </div>
+        </section>
+
+        <!-- NOUVEAU : FORMATION / PARCOURS SCOLAIRE -->
+        <section class="portfolio-step" data-section="Formation">
+            <div class="edu-card">
+                <div class="edu-header">
+                    <h2>Formation</h2>
+                </div>
+                <div class="edu-timeline">
+                    <div class="edu-item">
+                        <div class="edu-degree">Master — Intelligence Artificielle</div>
+                        <div class="edu-school">Institut universitaire de technologie · Douala</div>
+                        <div class="edu-year">2025 – En cours</div>
+                        <div class="edu-desc">Spécialisation en RAG, NLP, et systèmes décisionnels. Projet de fin d'études : analyse automatique de documents financiers.</div>
+                    </div>
+                    <div class="edu-item">
+                        <div class="edu-degree">Licence — Informatique</div>
+                        <div class="edu-school">Institut universitaire de technologie · Douala</div>
+                        <div class="edu-year">2024 – 2025</div>
+                        <div class="edu-desc">Bases solides en algorithmique, développement logiciel, réseaux et bases de données.</div>
+                    </div>
+                    <div class="edu-item">
+                        <div class="edu-degree">Baccalauréat en science économique et sociale</div>
+                        <div class="edu-school">College NAL · Douala</div>
+                        <div class="edu-year">2022</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="portfolio-step" data-section="Compétences">
+            <div style="width:100%;max-width:860px;display:flex;flex-direction:column;gap:24px;">
+                <div class="skills-3d-container" style="animation: float3D 8s infinite ease-in-out reverse; pointer-events: auto;">
+                    <div class="cyber-panel" style="transform: translateZ(20px);">
+                        <h3>[ TYPES D'APPLICATIONS ]</h3>
+                        <ul class="cyber-list">
+                            <li>Sites Vitrines Immersifs (3D)</li>
+                            <li>Boutiques E-commerce (Sur Mesure)</li>
+                            <li>Applications Desktop</li>
+                            <li>Application Mobile</li>
+                        </ul>
+                    </div>
+                    <div class="cyber-panel" style="transform: translateZ(-20px);">
+                        <h3>[ ARSENAL TECHNIQUE ]</h3>
+                        <div class="skill-bar-wrap"><div class="skill-bar-label"><span>React / JS / HTML</span><span>95%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-width="95"></div></div></div>
+                        <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Node.js / PHP / C#</span><span>85%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-width="85"></div></div></div>
+                        <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Three.js / WebGL</span><span>80%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-width="80"></div></div></div>
+                        <div class="skill-bar-wrap"><div class="skill-bar-label"><span>SQL / NoSQL</span><span>88%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-width="88"></div></div></div>
+                        <div class="skill-bar-wrap"><div class="skill-bar-label"><span>IA / Machine Learning</span><span>65%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-width="75"></div></div></div>
+                    </div>
+                </div>
+                <!-- NOUVEAU : Soft Skills + Langues -->
+                <div style="display:flex;gap:24px;flex-wrap:wrap;">
+                    <div class="soft-panel" style="flex:1;min-width:220px;">
+                        <h3>[ SOFT SKILLS ]</h3>
+                        <div>
+                            <span class="soft-tag">Gestion de projet</span>
+                            <span class="soft-tag pink">Travail en équipe</span>
+                            <span class="soft-tag">Résolution de problèmes</span>
+                            <span class="soft-tag pink">Communication client</span>
+                            <span class="soft-tag">Adaptabilité</span>
+                            <span class="soft-tag pink">Autonomie</span>
+                            <span class="soft-tag">Créativité</span>
+                            <span class="soft-tag pink">Veille technologique</span>
+                        </div>
+                    </div>
+                    <div class="soft-panel" style="flex:1;min-width:180px;">
+                        <h3>[ LANGUES ]</h3>
+                        <div class="lang-row"><span class="lang-flag">🇫🇷</span><span class="lang-name">Français</span><span class="lang-level">Natif</span></div>
+                        <div class="lang-row"><span class="lang-flag">🇬🇧</span><span class="lang-name">Anglais</span><span class="lang-level">Intermédiaire</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio-step" data-section="Système Alpha">
+            <div class="project-terminal">
+                <div class="p-header">
+                    <h3 class="p-title">Système Alpha</h3>
+                    <span class="p-year">V_2024</span>
+                </div>
+                <div class="project-badge">🔒 Projet réalisé en entreprise — code non public (confidentialité client)</div>
+                <p class="p-context"><strong>Contexte :</strong> Digitalisation d'une PME locale pour la gestion automatisée de leurs stocks et la vente en ligne de matériel technique.</p>
+                <div class="p-tags">
+                    <span class="p-tag">React</span><span class="p-tag">Node.js</span><span class="p-tag">MySQL</span><span class="p-tag pink">E-commerce</span>
+                </div>
+                <div class="p-testimonial">
+                    "Grâce à cette interface, nous avons réduit nos erreurs d'inventaire de 80% et doublé nos ventes sur mobile."
+                    <span>— Gérant de la structure cliente</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio-step" data-section="Digital Marketing">
+            <div class="project-terminal">
+                <div class="p-header">
+                    <h3 class="p-title">Digital Marketing</h3>
+                    <span class="p-year">V_2025</span>
+                </div>
+                <div class="project-badge">🔒 Projet réalisé en entreprise — code non public (confidentialité client)</div>
+                <p class="p-context"><strong>Contexte :</strong> Mise sur pied d'une plateforme web pour promouvoir les offres d'une entreprise.</p>
+                <div class="p-tags">
+                    <span class="p-tag">HTML/CSS</span><span class="p-tag">JavaScript</span><span class="p-tag pink">Landing Page</span>
+                </div>
+                <div class="p-testimonial">
+                    "Malgré nos débuts difficiles, nous avons pu nous relever grâce à cette stratégie digitale."
+                    <span>— Responsable Communication</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio-step" data-section="Green Project">
+            <div class="project-terminal">
+                <div class="p-header">
+                    <h3 class="p-title">Green Project</h3>
+                    <span class="p-year">V_2025</span>
+                </div>
+                <div class="project-badge">🔒 Projet réalisé en entreprise — code non public (confidentialité client)</div>
+                <p class="p-context"><strong>Contexte :</strong> Application desktop et web permettant de se connecter à des capteurs IoT pour suivre en temps réel l'évolution d'une plantation.</p>
+                <div class="p-tags">
+                    <span class="p-tag">C#</span><span class="p-tag">IoT / Capteurs</span><span class="p-tag">Node.js</span><span class="p-tag pink">Desktop + Web</span>
+                </div>
+                <div class="p-testimonial">
+                    "Nous avons accès aux données de nos cultures peu importe la distance grâce à ce système."
+                    <span>— Cultivateur, projet pilote</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio-step" data-section="Smart Learning">
+            <div class="project-terminal">
+                <div class="p-header">
+                    <h3 class="p-title">Smart learning</h3>
+                    <span class="p-year">V_2026</span>
+                </div>
+                <div class="project-badge">🔒 Projet réalisé en entreprise — code non public (confidentialité client)</div>
+                <p class="p-context"><strong>Contexte :</strong> Plateforme de e-learning utilisant l'IA pour personnaliser l'apprentissage et rendre les révisions dynamiques.</p>
+                <div class="p-tags">
+                    <span class="p-tag">React</span><span class="p-tag">Python / IA</span><span class="p-tag">MongoDB</span><span class="p-tag pink">E-learning</span>
+                </div>
+                <div class="p-testimonial">
+                    "J'ai pu me préparer à temps pour mon contrôle en utilisant juste Smart Learning."
+                    <span>— Étudiant en faculté de droit</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio-step" data-section="Digital Marketing">
+            <div class="project-terminal">
+                <div class="p-header">
+                    <h3 class="p-title">DIFF, Douala international film festival</h3>
+                    <span class="p-year">V_2026</span>
+                </div>
+                <p class="p-context"><strong>Contexte :</strong> Mise sur pied d'une plateforme web pour promouvoir le festival et ses activités.</p>
+                <div class="p-tags">
+                    <span class="p-tag">HTML/CSS</span><span class="p-tag">JavaScript</span><span class="p-tag pink">Landing Page</span>
+                </div>
+                <div class="p-testimonial">
+                    "Le festival a gagné en visibilité grâce à cette plateforme web, attirant un public plus large et diversifié."
+                    <span>— Responsable Communication</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio-step" id="final-step" data-section="Contact">
+            <div class="cyber-screen-card">
+                <div class="screen-content">
+                    <h3 class="glitch-text">LIAISON ÉTABLIE</h3>
+                    <p>Le système est prêt. Choisissez votre canal de transmission sécurisé pour initier le contact.</p>
+                    <div class="actions">
+                        <a href="https://wa.me/237672428288" class="cybr-btn">WHATSAPP</a>
+                        <a href="mailto:Shinobiultime@gmail.com" class="cybr-btn pink">EMAIL</a>
+                    </div>
+                    <div class="contact-links">
+                        <a href="https://github.com/Nathan234580975?tab=repositories" target="_blank" class="contact-link">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+                            GITHUB
+                        </a>
+                        <a href="https://linkedin.com/" target="_blank" class="contact-link">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                            LINKEDIN
+                        </a>
+                        <a href="tel:+237672428288" class="contact-link">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                            +237 672 428 288
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <script type="module">
+        import * as THREE from 'three';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+        import gsap from 'gsap';
+        import ScrollTrigger from 'gsap/ScrollTrigger';
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 1. INITIALISATION ---
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050505, 0.0015);
+
+        const cameraGroup = new THREE.Group();
+        scene.add(cameraGroup);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        cameraGroup.add(camera);
+
+        const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg'), antialias: false, powerPreference: "high-performance" });
+        renderer.setClearColor(0x050505, 1);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        cameraGroup.position.setZ(30);
+
+        // --- 2. GÉOMÉTRIES ET MATÉRIAUX ---
+
+        const gridHelperBottom = new THREE.GridHelper(2000, 100, 0x00f2fe, 0x00f2fe);
+        gridHelperBottom.position.y = -35;
+        gridHelperBottom.material.transparent = true;
+        gridHelperBottom.material.opacity = 0.15;
+        scene.add(gridHelperBottom);
+
+        const gridHelperTop = new THREE.GridHelper(2000, 100, 0xff007f, 0xff007f);
+        gridHelperTop.position.y = 35;
+        gridHelperTop.material.transparent = true;
+        gridHelperTop.material.opacity = 0.15;
+        scene.add(gridHelperTop);
+
+        // Les grilles se creusent vers le trou noir, comme aspirées par sa gravité
+        function warpGridTowardHole(grid, holeZ, pullDir, strength = 40, falloff = 140) {
+            const posAttr = grid.geometry.attributes.position;
+            for (let i = 0; i < posAttr.count; i++) {
+                const x = posAttr.getX(i);
+                const z = posAttr.getZ(i);
+                const dist = Math.sqrt(x * x + (z - holeZ) * (z - holeZ));
+                const pull = strength / (1 + Math.pow(dist / falloff, 2));
+                posAttr.setY(i, posAttr.getY(i) + pull * pullDir);
+            }
+            posAttr.needsUpdate = true;
+        }
+        warpGridTowardHole(gridHelperBottom, -800, 1);
+        warpGridTowardHole(gridHelperTop, -800, -1);
+
+        const portalGroup = new THREE.Group();
+        portalGroup.position.set(0, 0, 15);
+        if (window.innerWidth > 768) portalGroup.position.x = 8;
+
+        const outerRingGeo = new THREE.TorusGeometry(18, 0.3, 16, 100);
+        const outerRingMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, wireframe: true, transparent: true, opacity: 0.8 });
+        const outerRing = new THREE.Mesh(outerRingGeo, outerRingMat);
+
+        const innerRingGeo = new THREE.TorusGeometry(16, 0.5, 16, 100);
+        const innerRingMat = new THREE.MeshBasicMaterial({ color: 0xff007f, wireframe: true, transparent: true, opacity: 0.6 });
+        const innerRing = new THREE.Mesh(innerRingGeo, innerRingMat);
+        innerRing.rotation.x = Math.PI / 2;
+
+        const dataRuneGeo = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+        const dataRuneMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 });
+        const runesGroup = new THREE.Group();
+
+        for (let i = 0; i < 40; i++) {
+            const rune = new THREE.Mesh(dataRuneGeo, dataRuneMat);
+            const angle = (i / 40) * Math.PI * 2;
+            rune.position.x = Math.cos(angle) * 17;
+            rune.position.y = Math.sin(angle) * 17;
+            rune.rotation.z = Math.random() * Math.PI;
+            runesGroup.add(rune);
+        }
+
+        portalGroup.add(outerRing, innerRing, runesGroup);
+        scene.add(portalGroup);
+
+        const tunnelGeometry = new THREE.CylinderGeometry(25, 25, 1000, 32, 32, true);
+        const tunnelMaterial = new THREE.MeshBasicMaterial({ color: 0xff007f, wireframe: true, transparent: true, opacity: 0.15 });
+        const cyberTunnel = new THREE.Mesh(tunnelGeometry, tunnelMaterial);
+        cyberTunnel.rotation.x = Math.PI / 2;
+        cyberTunnel.position.z = -500;
+        scene.add(cyberTunnel);
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000;
+        const posArray = new Float32Array(particlesCount * 3);
+        for (let i = 0; i < particlesCount * 3; i += 3) {
+            posArray[i] = (Math.random() - 0.5) * 60;
+            posArray[i + 1] = (Math.random() - 0.5) * 60;
+            posArray[i + 2] = (Math.random() * -1200);
+        }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({ size: 0.25, color: 0xff007f, transparent: true, opacity: 0.8 });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        const shardsGroup = new THREE.Group();
+        const shardGeo = new THREE.TetrahedronGeometry(1.5);
+        const shardMatCyan = new THREE.MeshBasicMaterial({ color: 0x00f2fe, wireframe: true, transparent: true, opacity: 0.6 });
+        const shardMatPink = new THREE.MeshBasicMaterial({ color: 0xff007f, wireframe: true, transparent: true, opacity: 0.6 });
+        const shardsData = [];
+
+        for (let i = 0; i < 150; i++) {
+            const mesh = new THREE.Mesh(shardGeo, Math.random() > 0.5 ? shardMatCyan : shardMatPink);
+            mesh.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 60, (Math.random() * -1200));
+            mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+            const rotSpeed = { x: (Math.random() - 0.5) * 0.02, y: (Math.random() - 0.5) * 0.02, z: (Math.random() - 0.5) * 0.02 };
+            shardsData.push({ mesh, rotSpeed });
+            shardsGroup.add(mesh);
+        }
+        scene.add(shardsGroup);
+
+        // --- 3. LE TROU NOIR INFORMATIQUE ---
+        const quantumCore = new THREE.Group();
+        quantumCore.position.z = -800;
+
+        // Horizon des événements : cœur sombre, liseré fresnel lumineux (shader)
+        const innerCoreGeo = new THREE.SphereGeometry(8, 48, 48);
+        const innerCoreMat = new THREE.ShaderMaterial({
+            uniforms: {
+                time: { value: 0 },
+                colorA: { value: new THREE.Color(0x00f2fe) },
+                colorB: { value: new THREE.Color(0xff007f) }
+            },
+            vertexShader: `
+                varying vec3 vNormal;
+                varying vec3 vViewDir;
+                void main() {
+                    vNormal = normalize(normalMatrix * normal);
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    vViewDir = normalize(-mvPosition.xyz);
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                varying vec3 vNormal;
+                varying vec3 vViewDir;
+                uniform vec3 colorA;
+                uniform vec3 colorB;
+                uniform float time;
+                void main() {
+                    float fresnel = pow(1.0 - max(dot(normalize(vNormal), normalize(vViewDir)), 0.0), 2.4);
+                    vec3 rim = mix(colorA, colorB, sin(time * 0.6) * 0.5 + 0.5);
+                    gl_FragColor = vec4(rim * fresnel * 1.4, 1.0);
+                }
+            `,
+            blending: THREE.AdditiveBlending,
+            transparent: true,
+            depthWrite: false
+        });
+        const innerCore = new THREE.Mesh(innerCoreGeo, innerCoreMat);
+        quantumCore.add(innerCore);
+
+        const outerCoreGeo = new THREE.IcosahedronGeometry(15, 1);
+        const outerCoreMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, wireframe: true, transparent: true, opacity: 0.5 });
+        const outerCore = new THREE.Mesh(outerCoreGeo, outerCoreMat);
+        quantumCore.add(outerCore);
+
+        const ringGeo = new THREE.TorusGeometry(22, 0.2, 16, 100);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xff007f, transparent: true, opacity: 0.8 });
+
+        const ring1 = new THREE.Mesh(ringGeo, ringMat); ring1.rotation.x = Math.PI / 2;
+        const ring2 = new THREE.Mesh(ringGeo, ringMat); ring2.rotation.y = Math.PI / 2;
+        const ring3 = new THREE.Mesh(ringGeo, ringMat); ring3.rotation.x = Math.PI / 4; ring3.rotation.y = Math.PI / 4;
+
+        quantumCore.add(ring1, ring2, ring3);
+
+        // Disque d'accrétion : particules en rotation képlérienne (plus rapides près du centre)
+        const diskCount = 700;
+        const diskGeo = new THREE.BufferGeometry();
+        const diskPos = new Float32Array(diskCount * 3);
+        const diskCol = new Float32Array(diskCount * 3);
+        const diskData = [];
+        const cHot = new THREE.Color(0xffffff);
+        const cMid = new THREE.Color(0x00f2fe);
+        const cOut = new THREE.Color(0xff007f);
+        for (let i = 0; i < diskCount; i++) {
+            const radius = 10 + Math.random() * 32;
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 1.4 / radius;
+            const y = (Math.random() - 0.5) * Math.max(1.2 - radius * 0.02, 0.15);
+            diskData.push({ radius, angle, speed, y });
+
+            const t = (radius - 10) / 32;
+            const col = t < 0.5 ? cHot.clone().lerp(cMid, t / 0.5) : cMid.clone().lerp(cOut, (t - 0.5) / 0.5);
+            diskPos[i * 3] = Math.cos(angle) * radius;
+            diskPos[i * 3 + 1] = y;
+            diskPos[i * 3 + 2] = Math.sin(angle) * radius;
+            diskCol[i * 3] = col.r; diskCol[i * 3 + 1] = col.g; diskCol[i * 3 + 2] = col.b;
+        }
+        diskGeo.setAttribute('position', new THREE.BufferAttribute(diskPos, 3));
+        diskGeo.setAttribute('color', new THREE.BufferAttribute(diskCol, 3));
+        const diskMat = new THREE.PointsMaterial({ size: 0.5, vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false });
+        const accretionDisk = new THREE.Points(diskGeo, diskMat);
+        quantumCore.add(accretionDisk);
+
+        scene.add(quantumCore);
+
+        // Flux de données binaires aspirés en spirale vers le centre
+        function makeGlyphTexture(char) {
+            const size = 64;
+            const canvas = document.createElement('canvas');
+            canvas.width = size; canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            ctx.font = 'bold 44px "Share Tech Mono", monospace';
+            ctx.fillStyle = '#eafcff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = '#00f2fe';
+            ctx.shadowBlur = 14;
+            ctx.fillText(char, size / 2, size / 2 + 2);
+            return new THREE.CanvasTexture(canvas);
+        }
+        const glyphTextures = [makeGlyphTexture('0'), makeGlyphTexture('1')];
+
+        function createDataStream(texture, count, baseColor) {
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(count * 3);
+            const data = [];
+            for (let i = 0; i < count; i++) {
+                const radius = 20 + Math.random() * 60;
+                const angle = Math.random() * Math.PI * 2;
+                data.push({ radius, angle, fallSpeed: 0.12 + Math.random() * 0.18, angleSpeed: 0.25 + Math.random() * 0.5 });
+                pos[i * 3] = Math.cos(angle) * radius;
+                pos[i * 3 + 1] = Math.sin(angle * 2.0) * 3;
+                pos[i * 3 + 2] = Math.sin(angle) * radius;
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({
+                size: 2.2, map: texture, color: baseColor, transparent: true,
+                blending: THREE.AdditiveBlending, depthWrite: false, alphaTest: 0.02
+            });
+            const points = new THREE.Points(geo, mat);
+            quantumCore.add(points);
+            return { points, geo, data };
+        }
+        const dataStreams = [
+            createDataStream(glyphTextures[0], 140, 0x00f2fe),
+            createDataStream(glyphTextures[1], 140, 0xff007f)
+        ];
+
+        // --- 4. POST-PROCESSING (NÉON + DISTORSION GRAVITATIONNELLE) ---
+        const renderScene = new RenderPass(scene, camera);
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.1);
+        bloomPass.strength = 0.8;
+        bloomPass.radius = 0.4;
+        bloomPass.threshold = 0.15;
+
+        const composer = new EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+
+        // Lentille gravitationnelle : l'image se courbe vers le centre à l'approche du trou noir
+        const lensShader = {
+            uniforms: {
+                tDiffuse: { value: null },
+                strength: { value: 0 },
+                center: { value: new THREE.Vector2(0.5, 0.5) }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D tDiffuse;
+                uniform float strength;
+                uniform vec2 center;
+                varying vec2 vUv;
+                void main() {
+                    vec2 toCenter = vUv - center;
+                    float dist = length(toCenter);
+                    float warp = strength / (dist * 6.0 + 1.0);
+                    vec2 dir = toCenter * warp;
+                    float r = texture2D(tDiffuse, vUv - dir * 1.03).r;
+                    float g = texture2D(tDiffuse, vUv - dir).g;
+                    float b = texture2D(tDiffuse, vUv - dir * 0.97).b;
+                    gl_FragColor = vec4(r, g, b, 1.0);
+                }
+            `
+        };
+        const lensPass = new ShaderPass(lensShader);
+        composer.addPass(lensPass);
+
+        // --- 5. INTERACTION SOURIS & SCROLL ---
+        let mouseX = 0; let mouseY = 0;
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        let vortexStrength = 0;
+
+        const tl = gsap.timeline({
+            scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: 1 }
+        });
+
+        // La caméra plonge droit dans le trou noir informatique
+        tl.to(cameraGroup.position, { x: 0, y: 5, z: -150, ease: "power2.inOut" }, 0);
+        tl.to(cameraGroup.position, { x: 0, y: 0, z: -770, ease: "none" }, 0.2);
+        tl.to(cameraGroup.rotation, { y: Math.PI, ease: "power2.inOut" }, 0.8);
+
+        gsap.to(portalGroup.scale, { x: 4, y: 4, z: 4, scrollTrigger: { trigger: "#about", start: "top bottom", end: "bottom center", scrub: 1 } });
+        gsap.to(portalGroup.rotation, { z: Math.PI * 3, scrollTrigger: { trigger: "#about", start: "top bottom", end: "bottom center", scrub: 1 } });
+
+        // Franchissement de l'horizon : distorsion, flash, champ de vision
+        const flashEl = document.getElementById('horizonFlash');
+        function smoothstep(a, b, x) {
+            const t = THREE.MathUtils.clamp((x - a) / (b - a), 0, 1);
+            return t * t * (3 - 2 * t);
+        }
+        ScrollTrigger.create({
+            trigger: "body", start: "top top", end: "bottom bottom",
+            onUpdate: (self) => {
+                const p = self.progress;
+                vortexStrength = Math.min(p * 1.4, 1);
+
+                let lens = smoothstep(0.08, 0.78, p);
+                if (p > 0.8) lens *= (1 - smoothstep(0.8, 0.92, p));
+                lensPass.uniforms.strength.value = lens * 1.6;
+
+                camera.fov = 75 + lens * 22;
+                camera.updateProjectionMatrix();
+
+                let flash = 0;
+                if (p > 0.76 && p < 0.86) {
+                    flash = Math.sin(((p - 0.76) / 0.10) * 0.5);
+                }
+                flashEl.style.opacity = flash.toFixed(3);
+
+                bloomPass.strength = 1.6 + lens * 0.6;
+                tunnelMaterial.opacity = 0.15 + vortexStrength * 0.25;
+            }
+        });
+
+        // --- 6. BOUCLE D'ANIMATION ---
+        const camWorldPos = new THREE.Vector3();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = Date.now() * 0.001;
+
+            outerRing.rotation.z -= 0.002;
+            innerRing.rotation.y += 0.005;
+            runesGroup.rotation.z += 0.004;
+            cyberTunnel.rotation.y += 0.002;
+            gridHelperBottom.position.z = (gridHelperBottom.position.z + 1.5) % 20;
+            gridHelperTop.position.z = (gridHelperTop.position.z + 1.5) % 20;
+
+            shardsData.forEach(shard => {
+                shard.mesh.rotation.x += shard.rotSpeed.x;
+                shard.mesh.rotation.y += shard.rotSpeed.y;
+                shard.mesh.rotation.z += shard.rotSpeed.z;
+                shard.mesh.position.z += 1.5;
+                shard.mesh.position.x -= shard.mesh.position.x * vortexStrength * 0.003;
+                shard.mesh.position.y -= shard.mesh.position.y * vortexStrength * 0.003;
+                if (shard.mesh.position.z > cameraGroup.position.z + 50) shard.mesh.position.z = cameraGroup.position.z - 1200;
+            });
+
+            camera.getWorldPosition(camWorldPos);
+            const positions = particlesMesh.geometry.attributes.position.array;
+            for (let i = 0; i < particlesCount * 3; i += 3) {
+                positions[i + 2] += 1.5;
+                positions[i] -= positions[i] * vortexStrength * 0.004;
+                positions[i + 1] -= positions[i + 1] * vortexStrength * 0.004;
+                const dx = positions[i] - camWorldPos.x;
+                const dy = positions[i + 1] - camWorldPos.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const dz = positions[i + 2] - camWorldPos.z;
+
+                if (dz > -100 && dz < 0 && distance < 12) {
+                    const force = (12 - distance) / 12;
+                    positions[i] += (dx / distance) * force * 0.6;
+                    positions[i + 1] += (dy / distance) * force * 0.6;
+                }
+                if (positions[i + 2] > camWorldPos.z + 50) {
+                    positions[i + 2] = camWorldPos.z - 1200;
+                    positions[i] = camWorldPos.x + (Math.random() - 0.5) * 60;
+                    positions[i + 1] = camWorldPos.y + (Math.random() - 0.5) * 60;
+                }
+            }
+            particlesMesh.geometry.attributes.position.needsUpdate = true;
+
+            // Horizon des événements + disque d'accrétion + flux de données
+            innerCore.material.uniforms.time.value = time;
+            innerCore.scale.setScalar(1 + Math.sin(time * 3) * 0.15);
+            outerCore.rotation.y += 0.01;
+            outerCore.rotation.z -= 0.005;
+            ring1.rotation.y += 0.015;
+            ring2.rotation.x += 0.015;
+            ring3.rotation.z += 0.015;
+
+            const dPos = accretionDisk.geometry.attributes.position;
+            for (let i = 0; i < diskData.length; i++) {
+                const d = diskData[i];
+                d.angle += d.speed * (0.4 + vortexStrength * 0.8);
+                dPos.setX(i, Math.cos(d.angle) * d.radius);
+                dPos.setZ(i, Math.sin(d.angle) * d.radius);
+            }
+            dPos.needsUpdate = true;
+
+            dataStreams.forEach(stream => {
+                const sp = stream.geo.attributes.position;
+                stream.data.forEach((d, i) => {
+                    d.angle += d.angleSpeed * 0.015;
+                    d.radius -= d.fallSpeed * (0.5 + vortexStrength);
+                    if (d.radius < 4) { d.radius = 55 + Math.random() * 25; d.angle = Math.random() * Math.PI * 2; }
+                    sp.setX(i, Math.cos(d.angle) * d.radius);
+                    sp.setY(i, Math.sin(d.angle * 2.0) * 3 * (d.radius / 60));
+                    sp.setZ(i, Math.sin(d.angle) * d.radius);
+                });
+                sp.needsUpdate = true;
+            });
+
+            camera.position.x += (mouseX * 2 - camera.position.x) * 0.05;
+            camera.position.y += (mouseY * 2 - camera.position.y) * 0.05;
+
+            composer.render();
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+
+            if (window.innerWidth > 768) portalGroup.position.x = 8;
+            else portalGroup.position.x = 0;
+        });
+    </script>
+
+    <script>
+        // --- TYPING ANIMATION ---
+        const phrases = [
+            "Je conçois des expériences web immersives et professionnelles.",
+            "Spécialisé en IA, Full-Stack & applications embarquées.",
+            "De l'idée au produit fini, je démarque votre projet."
+        ];
+        let pIdx = 0, cIdx = 0, deleting = false;
+        const el = document.getElementById('heroTyping');
+        el.innerHTML = '<span class="typing-cursor"></span>';
+
+        function typeEffect() {
+            const phrase = phrases[pIdx];
+            if (!deleting) {
+                cIdx++;
+                el.innerHTML = phrase.slice(0, cIdx) + '<span class="typing-cursor"></span>';
+                if (cIdx === phrase.length) { deleting = true; setTimeout(typeEffect, 2000); return; }
+            } else {
+                cIdx--;
+                el.innerHTML = phrase.slice(0, cIdx) + '<span class="typing-cursor"></span>';
+                if (cIdx === 0) { deleting = false; pIdx = (pIdx + 1) % phrases.length; setTimeout(typeEffect, 400); return; }
+            }
+            setTimeout(typeEffect, deleting ? 30 : 55);
+        }
+        setTimeout(typeEffect, 800);
+
+        // --- SKILL BARS ON SCROLL ---
+        const bars = document.querySelectorAll('.skill-bar-fill');
+        const barObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if(e.isIntersecting) { e.target.style.width = e.target.dataset.width + '%'; } });
+        }, { threshold: 0.3 });
+        bars.forEach(b => barObs.observe(b));
+
+        // --- NAV DOTS ---
+        const sections = document.querySelectorAll('[data-section]');
+        const dotsContainer = document.getElementById('navDots');
+        const dots = [];
+        sections.forEach((sec, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot';
+            dot.title = sec.dataset.section;
+            dot.addEventListener('click', () => sec.scrollIntoView({ behavior: 'smooth' }));
+            dotsContainer.appendChild(dot);
+            dots.push(dot);
+        });
+
+        const dotObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    const idx = Array.from(sections).indexOf(e.target);
+                    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+                }
+            });
+        }, { threshold: 0.5 });
+        sections.forEach(s => dotObs.observe(s));
+
+        // --- SCROLL INDICATOR HIDE ---
+        const scrollInd = document.getElementById('scrollIndicator');
+        window.addEventListener('scroll', () => {
+            scrollInd.classList.toggle('hidden', window.scrollY > 200);
+        }, { passive: true });
+    </script>
+</body>
+</html>
